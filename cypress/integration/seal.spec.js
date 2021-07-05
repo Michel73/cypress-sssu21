@@ -1,4 +1,12 @@
+import CookieDialog from '../support/page-objects/CookieDialog';
+import SealContentPage from '../support/page-objects/SealContentPage';
+import SealHeaderPage from '../support/page-objects/SealHeaderPage';
+
 describe('seal homepage', () => {
+  const cookieDialog = new CookieDialog();
+  const sealHeaderPage = new SealHeaderPage();
+  const sealContentPage = new SealContentPage();
+
   before(() => {
     cy.visit('https://www.sealsystems.de');
     Cypress.Cookies.defaults({
@@ -19,25 +27,25 @@ describe('seal homepage', () => {
 
   describe('Cookie Dialog', () => {
     it('should exist', () => {
-      cy.get('#CookieBoxTextHeadline').should('exist');
+      cy.get(cookieDialog.cookieBoxHeadline).should('exist');
     });
 
     it('language should not be selectable', { defaultCommandTimeout: 500 }, () => {
-      cy.get('.nav-languages > :nth-child(1) > .menu-item-has-children > [href="https://www.sealsystems.de/"] > img').trigger('mouseover');
+      cy.get(sealHeaderPage.languageSelection).trigger('mouseover');
       cy.once('fail', (err) => {
         expect(err.message).to.include('is being covered by another element:');
       })
     });
 
     it('should disappear after save', () => {
-      cy.get('#CookieBoxSaveButton').click();
+      cy.get(cookieDialog.saveButton).click();
     });
   });
 
   describe('search', () => {
     it('should show some result', () => {
-      cy.get('.header-inner > .shell > .search-form > label > #s').type('COM').type('{enter}');
-      cy.get(':nth-child(1) > .article-head > .article-title').should('contain', '"COM"');
+      cy.get(sealHeaderPage.searchField).type('COM').type('{enter}');
+      cy.get(sealContentPage.searchResultHeadline).should('contain', '"COM"');
     });
   });
 });
